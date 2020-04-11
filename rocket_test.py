@@ -11,7 +11,7 @@ ypos = 0
 rocket.left(90)
 rocket.penup()
 while ypos < 300:
-	ypos = ypos + 1
+	ypos = ypos + 0.1
 	rocket.forward(ypos)
 
 	
