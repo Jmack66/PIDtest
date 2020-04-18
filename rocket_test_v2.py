@@ -1,8 +1,13 @@
 import turtle
 import numpy as np
-import matplotlib
+import matplotlib.pyplot as plt
+import matplotlib.animation as animation
+from matplotlib import style
 import time
 import sys
+sytle.use('fivethirtyeight')
+fig = plt.figure()
+ax1 = fig.add_subplot(1,1,1)
 mass = 1 #kg
 max_thrust = 15
 g = -9.81 #ms^-2
@@ -25,6 +30,7 @@ marker.left(180)
 marker.goto(15,setpoint)
 marker.color("red")
 
+
 def initScreen():
 	global screen
 	screen = turtle.Screen()
@@ -46,6 +52,13 @@ def computePID2(height):
 	output = kp*error + ki*errorsum + kd*error_d
 	return output
 
+def animate(h)
+	h_plot = []
+	t_plot = []
+	h_plot.append(h)
+	t += 1
+	t_plot.append(t)
+
 def main():
 	initScreen()
 	sim = True
@@ -58,7 +71,7 @@ def main():
 		dy += ddy(thrust)
 		y = rocket.ycor()
 		rocket.sety(y + dy)
-		time.sleep(0.5)
+		time.sleep(0.1)
 		if y > 900:
 			sim = False
 		elif y < -900:
