@@ -6,17 +6,19 @@ from matplotlib import style
 import time
 import sys
 #--------------------------
-sytle.use('fivethirtyeight')
-fig = plt.figure()
-ax1 = fig.add_subplot(1,1,1)
+#sytle.use('fivethirtyeight')
+# fig = plt.figure()
+# ax1 = fig.add_subplot(1,1,1)
+# lines = plt.plot([])
+# line = lines[0]
 mass = 1 #kg
 max_thrust = 15
 g = -9.81 #ms^-2
 v_i = 0 #start at 0 m/s
 h_i = 0 #start at 0 m
-kp = 1 	#pid gains----
+kp = 0.55 	#pid gains----
 ki = 0	#pid gains----
-kd = 0	#pid gains----
+kd = 0.8	#pid gains----
 setpoint = 10
 errorsum = 0
 last_error = 0
@@ -36,14 +38,14 @@ def initScreen():
 	global screen
 	screen = turtle.Screen()
 	screen.setup(800,800)
-	screen.tracer(0)
+	#screen.tracer(0)
 
 def ddy(thrust):
 	if thrust > max_thrust:
-		thrust = max_thrust/mass
+		thrust = max_thrust
 	elif thrust < 0:
 		thrust = 0
-	return g + thrust/mass
+	return (g + thrust/mass)
 
 def computePID2(height):
 	global errorsum,last_error
@@ -53,29 +55,25 @@ def computePID2(height):
 	output = kp*error + ki*errorsum + kd*error_d
 	return output
 
-def animate(h)
-	h_plot = []
-	t_plot = []
-	h_plot.append(h)
-	t += 1
-	t_plot.append(t)
-
+#add functionality to plot points
 def main():
 	initScreen()
 	sim = True
 	dy = 0
 	thrust = 0
 	y = 0
+	t = 0
 	while sim is True:
-		screen.update()
+		#screen.update()
 		thrust = computePID2(y)
+		print(thrust)
 		dy += ddy(thrust)
 		y = rocket.ycor()
 		rocket.sety(y + dy)
-		time.sleep(0.1)
-		if y > 900:
+		time.sleep(0.05)
+		if y > 800:
 			sim = False
-		elif y < -900:
+		elif y < -800:
 			sim = False
 
 main()
