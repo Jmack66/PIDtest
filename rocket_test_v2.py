@@ -16,9 +16,9 @@ max_thrust = 15
 g = -9.81 #ms^-2
 v_i = 0 #start at 0 m/s
 h_i = 0 #start at 0 m
-kp = 0.55 	#pid gains----
-ki = 0	#pid gains----
-kd = 0.8	#pid gains----
+kp = 0.2 	#pid gains----
+ki = 0.032	#pid gains----
+kd = 0.1	#pid gains----
 setpoint = 10
 errorsum = 0
 last_error = 0
@@ -41,18 +41,19 @@ def initScreen():
 	#screen.tracer(0)
 
 def ddy(thrust):
-	if thrust > max_thrust:
-		thrust = max_thrust
-	elif thrust < 0:
-		thrust = 0
 	return (g + thrust/mass)
 
 def computePID2(height):
 	global errorsum,last_error
 	error = setpoint-height
-	errorsum += error
-	error_d = error - last_error
+	errorsum += error*0.05
+	error_d = (error - last_error)/0.05
 	output = kp*error + ki*errorsum + kd*error_d
+	if output > 15:
+		output = 15
+	elif output < 0:
+		output = 0
+	last_error = error
 	return output
 
 #add functionality to plot points
@@ -66,7 +67,6 @@ def main():
 	while sim is True:
 		#screen.update()
 		thrust = computePID2(y)
-		print(thrust)
 		dy += ddy(thrust)
 		y = rocket.ycor()
 		rocket.sety(y + dy)
