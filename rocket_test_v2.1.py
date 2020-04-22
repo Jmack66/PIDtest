@@ -16,15 +16,15 @@ def main():
 	kd = 0.1	
 	SETPOINT = 10
 	initScreen()
-	initMarker()
+	initMarker(SETPOINT)
 	initRocket()
 
 
-def initMarker():
+def initMarker(SETPOINT):
 	marker = turtle.Turtle()
 	marker.penup()
 	marker.left(180)
-	marker.goto(15,setpoint)
+	marker.goto(15, SETPOINT)
 	marker.color("red")
 def initRocket():
 	rocket = turtle.Turtle()
@@ -45,12 +45,12 @@ def get_dy(ddy):
 	return dy
 
 class Rocket:
-	def __init__(self, thrust):
+	def __init__(self):
 		self.ddy = g
 		self.dy = V_i
 		self.y = Y_i
 		self.thrust = thrust
-	def get_ddy(self):
+	def get_ddy(self,thrust):
 		self.ddy = g + self.thrust/MASS
 		return self.ddy
 	def get_dy(self):
@@ -59,3 +59,4 @@ class Rocket:
 	def get_y(self):
 		self.y = rocket.ycor()
 		return self.y
+main()
