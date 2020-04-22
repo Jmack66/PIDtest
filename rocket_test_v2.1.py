@@ -12,9 +12,9 @@ g = -9.81 #Gravitational constant
 V_i = 0 #initial velocity 
 Y_i = 0 #initial height
 #--------PID GAINS--------
-kp = 0.25 
-ki = 0.06	
-kd = 0.03	
+kp = 0.00 
+ki = 0.00	
+kd = 0.00	
 SETPOINT = 10
 def main():
 	sim = True
