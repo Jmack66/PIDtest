@@ -55,14 +55,7 @@ def initScreen():
 	global screen
 	screen = turtle.Screen()
 	screen.setup(800,800)
-
-def get_ddy(thrust):
-	return (g + thrust/MASS)
-
-def get_dy(ddy):
-	dy += ddy
-	return dy
-
+	
 class Rocket:
 	def __init__(self):
 		self.ddy = 0
