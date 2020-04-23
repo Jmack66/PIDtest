@@ -4,7 +4,6 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 import time
 from matplotlib import style
-global timestep,MASS,MAX_THRUST,g,V_i,Y_i,kp,ki,kdSETPOINT
 timestep = 0.05
 MASS = 1 #kg
 MAX_THRUST = 15 #Newtons
@@ -12,11 +11,14 @@ g = -9.81 #Gravitational constant
 V_i = 0 #initial velocity 
 Y_i = 0 #initial height
 #--------PID GAINS--------
-kp = 0.00 
-ki = 0.00	
-kd = 0.00	
+kp = 0.25 
+ki = 0.4	
+kd = 0.05	
 SETPOINT = 10
 def main():
+	initScreen()
+	initMarker(SETPOINT)
+	initRocket()
 	sim = True
 	r = Rocket()
 	pid = PID(kp,ki,kd,SETPOINT)
@@ -25,10 +27,10 @@ def main():
 	y = 0
 	while sim:
 		thrust = pid.compute(y)
-		ddy = r.get_ddy(thrust)
+		r.set_ddy(thrust)
+		ddy = r.get_ddy()
 		dy = r.get_dy()
 		y = rocket.ycor()
-		y = r.get_y(y)
 		rocket.sety(y + dy)
 		time.sleep(timestep)
 		if y > 800:
@@ -44,10 +46,12 @@ def initMarker(SETPOINT):
 	marker.left(180)
 	marker.goto(15, SETPOINT)
 	marker.color("red")
+
 def initRocket():
 	global rocket
 	rocket = turtle.Turtle()
 	rocket.shape('square')
+	marker.penup()
 	rocket.penup()
 	rocket.speed(0)
 	rocket.goto(0,-100)
@@ -61,15 +65,13 @@ class Rocket:
 		self.ddy = 0
 		self.dy = V_i
 		self.y = Y_i
-	def get_ddy(self,thrust):
+	def set_ddy(self,thrust):
 		self.ddy = g + thrust / MASS
+	def get_ddy(self):
 		return self.ddy
 	def get_dy(self):
 		self.dy += self.ddy
 		return  self.dy
-	def get_y(self,y):
-		self.y = y
-		return self.y
 
 class PID:
 	def __init__(self,kp,ki,kd,SETPOINT):
@@ -93,7 +95,4 @@ class PID:
 			self.output = 0
 		self.last_error = self.error
 		return self.output
-initScreen()
-initMarker(SETPOINT)
-initRocket()
 main() 
