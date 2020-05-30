@@ -12,8 +12,8 @@ V_i = 0 #initial velocity
 Y_i = 0 #initial height
 #--------PID GAINS--------
 kp = 0.2
-ki = 0	
-kd = 0
+ki = 0.0
+kd = 0.0
 #-------------------------
 SETPOINT = 10
 
@@ -32,9 +32,15 @@ class Simulation:
 		self.marker.color('red')
 		self.sim = True
 		self.timer = 0
+		self.pos = np.array([])
+		self.velocity = np.array([])
+		self.times = np.array([])
+		self.period = np.array([])
+
 	def cycle(self):
 		r = Rocket()
 		pid = PID(kp,ki,kd,SETPOINT)
+		positive = True
 		while self.sim:
 			thrust = pid.compute(r.get_y())
 			r.set_ddy(thrust)
@@ -42,15 +48,34 @@ class Simulation:
 			r.set_y()
 			time.sleep(timestep)
 			self.timer += timestep
-			print(r.get_y(),thrust)
 			if r.get_y() > 800:
 			 	self.sim = False
+			 	print("OUT OF BOUNDS")
 			elif r.get_y() < -800:
+				print("OUT OF BOUNDS")
 				self.sim = False
-		
+			if self.timer > 10:
+				print("SIM TIME END")
+				self.sim = False
+			self.times = np.append(self.times, self.timer)
+			self.velocity = np.append(self.velocity, r.get_dy())
+			self.pos = np.append(self.pos, r.get_y())
+			if r.get_dy() < 0:
+				if positive == True:
+					positive = False
+					self.period = np.append(self.period, self.timer)
+			if r.get_dy() > 0:
+				if positive == False:
+					positive = True
+					self.period = np.append(self.period, self.timer)
+		period = np.mean(self.period) / 2
+		print(period)
+		graph(self.times, self.pos)
 
+def graph(x,y):
+	plt.plot(x,y)
+	plt.show()
 
-		
 class Rocket:
 	def __init__(self):
 		global rocket
@@ -98,4 +123,5 @@ class PID:
 			self.output = 0
 		self.last_error = self.error
 		return self.output
+
 main() 
