@@ -1,13 +1,13 @@
 import numpy as np
-import matplotlib
+import matplotlib.pyplot as plt
 import turtle 
 import time
 
 #GLOBAL PARAMS
 TIMER = 0
-TIME_STEP = 0.005
-SETPOINT = 10
-SIM_TIME = 1000
+TIME_STEP = 0.001
+SETPOINT = 400
+SIM_TIME = 500
 INITIAL_X = 0
 INITIAL_Y = -100
 MASS = 1 #kg
@@ -16,12 +16,16 @@ g = -9.81 #Gravitational constant
 V_i = 0 #initial velocity 
 Y_i = 0 #initial height
 #------------
-#---PID GAINS---
-KP = 1
-KI = 0.06
-KD = 300
+#---PID GAINS--- 
+#ku = 0.6
+#Tu = 18 ms
+KP = 0.36
+KI = 40.0
+KD = 0.0008099999999999997
+# KP = 0.6
+# KI = 0.0
+# KD = 0.0
 #---------------
-
 
 class Simulation(object):
 	def __init__(self):
@@ -36,6 +40,8 @@ class Simulation(object):
 		self.marker.color('red')
 		self.sim = True
 		self.timer = 0
+		self.poses = np.array([])
+		self.times = np.array([])
 	def cycle(self):
 		while(self.sim):
 			thrust = self.pid.compute(self.Insight.get_y())
@@ -44,7 +50,7 @@ class Simulation(object):
 			self.Insight.set_dy()
 			self.Insight.set_y()
 			time.sleep(TIME_STEP)
-			self.timer += 1 
+			self.timer += 1
 			if self.timer > SIM_TIME:
 				print("SIM ENDED")
 				self.sim = False
@@ -54,6 +60,14 @@ class Simulation(object):
 			elif self.Insight.get_y() < -800:
 				print("OUT OF BOUNDS")
 				self.sim = False
+			self.poses = np.append(self.poses,self.Insight.get_y())
+			self.times = np.append(self.times,self.timer)
+		graph(self.times,self.poses)
+
+def graph(x,y):
+	plt.plot(x,y)
+	plt.show()
+
 
 class Rocket(object):
 	def __init__(self):
@@ -97,8 +111,9 @@ class PID(object):
 		self.error = self.setpoint - pos
 		self.integral_error += self.error * TIME_STEP
 		self.derivative_error = (self.error - self.error_last) / TIME_STEP
+		self.error_last = self.error
 		self.output = self.kp*self.error + self.ki*self.integral_error + self.kd*self.derivative_error
-		if self.output > MAX_THRUST:
+		if self.output >= MAX_THRUST:
 			self.output = MAX_THRUST
 		elif self.output <= 0:
 			self.output = 0
