@@ -6,7 +6,7 @@ import time
 #GLOBAL PARAMS
 TIMER = 0
 TIME_STEP = 0.001
-SETPOINT = 400
+SETPOINT = 10
 SIM_TIME = 500
 INITIAL_X = 0
 INITIAL_Y = -100
@@ -22,6 +22,7 @@ Y_i = 0 #initial height
 KP = 0.36
 KI = 40.0
 KD = 0.0008099999999999997
+antiWindup = True
 # KP = 0.6
 # KI = 0.0
 # KD = 0.0
@@ -109,10 +110,20 @@ class PID(object):
 		self.output = 0
 	def compute(self, pos):
 		self.error = self.setpoint - pos
-		self.integral_error += self.error * TIME_STEP
+		#self.integral_error += self.error * TIME_STEP
 		self.derivative_error = (self.error - self.error_last) / TIME_STEP
 		self.error_last = self.error
 		self.output = self.kp*self.error + self.ki*self.integral_error + self.kd*self.derivative_error
+		if(abs(self.output)>= MAX_THRUST and (((self.error>=0) and (self.integral_error>=0))or((self.error<0) and (self.integral_error<0)))):
+			if(antiWindup):
+				#no integration
+				self.integral_error = self.integral_error
+			else:
+				#if no antiWindup rectangular integration
+				self.integral_error += self.error * TIME_STEP
+		else:
+			#rectangular integration
+			self.integral_error += self.error * TIME_STEP
 		if self.output >= MAX_THRUST:
 			self.output = MAX_THRUST
 		elif self.output <= 0:
