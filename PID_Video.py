@@ -107,7 +107,7 @@ class Rocket(object):
 	def get_ddy(self):
 		return self.ddy
 	def set_dy(self):
-		self.dy += self.ddy
+		self.dy += self.ddy * TIME_STEP
 	def get_dy(self):
 		return self.dy
 	def set_y(self):
