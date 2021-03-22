@@ -111,7 +111,7 @@ class Rocket(object):
 	def get_dy(self):
 		return self.dy
 	def set_y(self):
-		self.Rocket.sety(self.y + self.dy)
+		self.Rocket.sety(self.y + self.dy * TIME_STEP)
 	def get_y(self):
 		self.y = self.Rocket.ycor()
 		return self.y
